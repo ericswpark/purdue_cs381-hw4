@@ -4,6 +4,7 @@ use axum::routing::post;
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tower_http::cors::CorsLayer;
 
 fn dp_best_cost(a: &[u8], b: &[u8], n: usize) -> u32 {
     let mut t: Vec<u32> = Vec::new();
@@ -83,8 +84,12 @@ async fn question_one(Json(payload): Json<QuestionOne>) -> impl IntoResponse {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/1", post(question_one));
+    let app = Router::new()
+        .route("/1", post(question_one))
+        .layer(CorsLayer::permissive());
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:10000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:10000")
+        .await
+        .unwrap();
     axum::serve(listener, app).await.unwrap();
 }

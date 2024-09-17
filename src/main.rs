@@ -6,12 +6,12 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tower_http::cors::CorsLayer;
 
-fn dp_best_cost(a: &[u8], b: &[u8], n: usize) -> u32 {
+fn dp_best_cost(a: &[u32], b: &[u32], n: usize) -> u32 {
     let mut t: Vec<u32> = Vec::new();
 
     for (i, cost) in a.iter().enumerate().take(n) {
         if i == 0 {
-            t.push(*cost as u32);
+            t.push(*cost);
             continue;
         }
 
@@ -35,7 +35,7 @@ fn dp_best_cost(a: &[u8], b: &[u8], n: usize) -> u32 {
             max_prev_t = Some(0);
         }
 
-        t.push(*cost as u32 + max_prev_t.unwrap());
+        t.push(*cost + max_prev_t.unwrap());
     }
 
     *t.iter().max().unwrap()
@@ -43,8 +43,8 @@ fn dp_best_cost(a: &[u8], b: &[u8], n: usize) -> u32 {
 
 #[derive(Deserialize)]
 struct QuestionOne {
-    a: Vec<u8>,
-    b: Vec<u8>,
+    a: Vec<u32>,
+    b: Vec<u32>,
 }
 
 #[derive(Serialize)]
@@ -67,7 +67,7 @@ impl IntoResponse for QuestionOneError {
     }
 }
 
-fn do_question_one(a: Vec<u8>, b: Vec<u8>) -> Result<u32, QuestionOneError> {
+fn do_question_one(a: Vec<u32>, b: Vec<u32>) -> Result<u32, QuestionOneError> {
     if a.len() != b.len() {
         return Err(QuestionOneError::LengthMismatch);
     }

@@ -109,8 +109,8 @@ fn most_keypresses(n: u32) -> u32 {
             continue;
         }
 
-        for j in 0..=i + 1 {
-            // Adding 'a' with 1 keypress
+        for j in 0..=i + 1 {    // From 1 to i
+            // Adding 'a' with 1 keypress from previous row
             let add_a = t[(i - 1) as usize][j as usize] + 1;
 
             // Pasting that sums up to the current value

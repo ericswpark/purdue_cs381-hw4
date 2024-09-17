@@ -93,8 +93,37 @@ struct QuestionThree {
 struct QuestionThreeAnswer {
     answer: u32,
 }
+
+#[derive(Error, Debug)]
+enum QuestionThreeError {
+    #[error("Please keep n below 50")]
+    NTooBig,
+}
+
+impl IntoResponse for QuestionThreeError {
+    fn into_response(self) -> Response {
+        let (status, body) = match self {
+            QuestionThreeError::NTooBig => (StatusCode::BAD_REQUEST, self.to_string()),
+        };
+        (status, Json(serde_json::json!({ "error": body }))).into_response()
+    }
+}
+
+fn do_question_three(n: u32) -> Result<u32, QuestionThreeError> {
+    if n > 50 {
+        return Err(QuestionThreeError::NTooBig);
+    }
+
+    let result = most_keypresses(n);
+    Ok(result)
+}
+
+
 async fn question_three(Json(payload): Json<QuestionThree>) -> impl IntoResponse {
-    (StatusCode::OK, Json(QuestionThreeAnswer { answer: most_keypresses(payload.n) })).into_response()
+    match do_question_three(payload.n) {
+        Ok(result) => (StatusCode::OK, Json(QuestionThreeAnswer { answer: result })).into_response(),
+        Err(e) => e.into_response(),
+    }
 }
 
 fn most_keypresses(n: u32) -> u32 {

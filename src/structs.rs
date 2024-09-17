@@ -1,3 +1,6 @@
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
+use axum::Json;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -18,6 +21,15 @@ pub enum QuestionOneError {
     LengthMismatch,
 }
 
+impl IntoResponse for QuestionOneError {
+    fn into_response(self) -> Response {
+        let (status, body) = match self {
+            QuestionOneError::LengthMismatch => (StatusCode::BAD_REQUEST, self.to_string()),
+        };
+        (status, Json(serde_json::json!({ "error": body }))).into_response()
+    }
+}
+
 #[derive(Deserialize)]
 pub struct QuestionTwo {
     pub(crate) s: Vec<u32>,
@@ -35,6 +47,15 @@ pub enum QuestionTwoError {
     LengthMismatch,
 }
 
+impl IntoResponse for QuestionTwoError {
+    fn into_response(self) -> Response {
+        let (status, body) = match self {
+            QuestionTwoError::LengthMismatch => (StatusCode::BAD_REQUEST, self.to_string()),
+        };
+        (status, Json(serde_json::json!({ "error": body }))).into_response()
+    }
+}
+
 #[derive(Deserialize)]
 pub struct QuestionThree {
     pub(crate) n: u32,
@@ -49,4 +70,13 @@ pub struct QuestionThreeAnswer {
 pub enum QuestionThreeError {
     #[error("Please keep n below 50")]
     NTooBig,
+}
+
+impl IntoResponse for QuestionThreeError {
+    fn into_response(self) -> Response {
+        let (status, body) = match self {
+            QuestionThreeError::NTooBig => (StatusCode::BAD_REQUEST, self.to_string()),
+        };
+        (status, Json(serde_json::json!({ "error": body }))).into_response()
+    }
 }

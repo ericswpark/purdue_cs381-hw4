@@ -5,6 +5,7 @@ use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tower_http::cors::CorsLayer;
+use tower_http::trace::TraceLayer;
 
 fn dp_best_cost(a: &[u32], b: &[u32], n: usize) -> u32 {
     let mut t: Vec<u32> = Vec::new();
@@ -86,7 +87,12 @@ async fn question_one(Json(payload): Json<QuestionOne>) -> impl IntoResponse {
 async fn main() {
     let app = Router::new()
         .route("/1", post(question_one))
-        .layer(CorsLayer::permissive());
+        .layer(CorsLayer::permissive())
+        .layer(TraceLayer::new_for_http());
+
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:10000")
         .await

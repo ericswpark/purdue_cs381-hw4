@@ -103,10 +103,9 @@ fn most_keypresses(n: u32) -> u32 {
     let mut t: Vec<Vec<u32>> = vec![vec![u32::MAX - 10; (n + 1) as usize]; n as usize];
 
     for i in 0..n {
-        // Base case, typing 1 with 0 in the clipboard
         if i == 0 {
-            t[0][0] = 1;
-            t[0][1] = 4;
+            t[0][0] = 1; // Base case, typing 1 with 0 in the clipboard
+            t[0][1] = 4; // Base case, typing 1 with 1 in the clipboard (a - Ctrl A - Ctrl C)
             continue;
         }
 

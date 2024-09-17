@@ -1,3 +1,4 @@
+use std::cmp::min;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::routing::post;
@@ -82,6 +83,62 @@ async fn question_one(Json(payload): Json<QuestionOne>) -> impl IntoResponse {
         Err(e) => e.into_response(),
     }
 }
+
+#[derive(Deserialize)]
+struct QuestionThree {
+    n: u32,
+}
+
+#[derive(Serialize)]
+struct QuestionThreeAnswer {
+    answer: u32,
+}
+async fn question_three(Json(payload): Json<QuestionThree>) -> impl IntoResponse {
+    (StatusCode::OK, Json(QuestionThreeAnswer { answer: most_keypresses(payload.n) })).into_response()
+}
+
+fn most_keypresses(n: u32) -> u32 {
+    // Possible clipboard values range from 0 to n, so we need to have n + 1 spaces
+    // To prevent overflowing, leave 10 of headroom
+    let mut t: Vec<Vec<u32>> = vec![vec![u32::MAX - 10; (n + 1) as usize]; n as usize];
+
+    for i in 0..n {
+        // Base case, typing 1 with 0 in the clipboard
+        if i == 0 {
+            t[0][0] = 1;
+            t[0][1] = 4;
+            continue;
+        }
+
+        for j in 0..=i + 1 {
+            // Adding 'a' with 1 keypress
+            let add_a = t[(i - 1) as usize][j as usize] + 1;
+
+            // Pasting that sums up to the current value
+            let mut paste_case = i + 1 + 2;
+            for i_p in 0..i {
+                for j_p in 0..i_p {
+                    if i_p + j_p + 1 == i {
+                        paste_case = min(paste_case, t[i_p as usize][j_p as usize] + 2);
+                    }
+                }
+            }
+
+            // Copying
+            let mut copy_case = i + 1 + 3;
+            for j_p in 0..i {
+                if i - 1 == j {
+                    copy_case = min(copy_case, t[i as usize][j_p as usize] + 3);
+                }
+            }
+
+            t[i as usize][j as usize] = *[add_a, copy_case, paste_case].iter().min().unwrap();
+        }
+    }
+
+    *t[(n - 1) as usize].iter().min().unwrap()
+}
+
 
 #[tokio::main]
 async fn main() {

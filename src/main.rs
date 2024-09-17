@@ -113,8 +113,8 @@ fn most_keypresses(n: u32) -> u32 {
             // Adding 'a' with 1 keypress from previous row
             let add_a = t[(i - 1) as usize][j as usize] + 1;
 
-            // Pasting that sums up to the current value
-            let mut paste_case = i + 1 + 2;
+            // Pasting - find i and j that sum up to the current value
+            let mut paste_case = u32::MAX;
             for i_p in 0..i {
                 for j_p in 0..i_p {
                     if i_p + j_p + 1 == i {
@@ -124,7 +124,7 @@ fn most_keypresses(n: u32) -> u32 {
             }
 
             // Copying
-            let mut copy_case = i + 1 + 3;
+            let mut copy_case = u32::MAX;
             for j_p in 0..i {
                 if i - 1 == j {
                     copy_case = min(copy_case, t[i as usize][j_p as usize] + 3);

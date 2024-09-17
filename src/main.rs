@@ -34,6 +34,30 @@ async fn question_one(Json(payload): Json<QuestionOne>) -> impl IntoResponse {
     }
 }
 
+impl IntoResponse for QuestionTwoError {
+    fn into_response(self) -> Response {
+        let (status, body) = match self {
+            QuestionTwoError::LengthMismatch => (StatusCode::BAD_REQUEST, self.to_string()),
+        };
+        (status, Json(serde_json::json!({ "error": body }))).into_response()
+    }
+}
+
+fn do_question_two(s: Vec<u32>, l: Vec<u32>) -> Result<u32, QuestionTwoError> {
+    if s.len() != l.len() {
+        return Err(QuestionTwoError::LengthMismatch);
+    }
+
+    let result = dj(&s, &l);
+    Ok(result)
+}
+async fn question_two(Json(payload): Json<QuestionTwo>) -> impl IntoResponse {
+    match crate::do_question_two(payload.s, payload.l) {
+        Ok(result) => (StatusCode::OK, Json(QuestionTwoAnswer { answer: result })).into_response(),
+        Err(e) => e.into_response(),
+    }
+}
+
 impl IntoResponse for QuestionThreeError {
     fn into_response(self) -> Response {
         let (status, body) = match self {
@@ -65,6 +89,7 @@ async fn question_three(Json(payload): Json<QuestionThree>) -> impl IntoResponse
 async fn main() {
     let app = Router::new()
         .route("/1", post(question_one))
+        .route("/2", post(question_two))
         .route("/3", post(question_three))
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());

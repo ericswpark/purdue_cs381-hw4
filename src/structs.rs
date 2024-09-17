@@ -19,6 +19,23 @@ pub enum QuestionOneError {
 }
 
 #[derive(Deserialize)]
+pub struct QuestionTwo {
+    pub(crate) s: Vec<u32>,
+    pub(crate) l: Vec<u32>,
+}
+
+#[derive(Serialize)]
+pub struct QuestionTwoAnswer {
+    pub(crate) answer: u32,
+}
+
+#[derive(Error, Debug)]
+pub enum QuestionTwoError {
+    #[error("Array lengths do not match")]
+    LengthMismatch,
+}
+
+#[derive(Deserialize)]
 pub struct QuestionThree {
     pub(crate) n: u32,
 }

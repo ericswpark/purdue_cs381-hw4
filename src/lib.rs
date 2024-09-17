@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::cmp::{max, min};
 
 pub fn dp_best_cost(a: &[u32], b: &[u32], n: usize) -> u32 {
     let mut t: Vec<u32> = Vec::new();
@@ -30,6 +30,27 @@ pub fn dp_best_cost(a: &[u32], b: &[u32], n: usize) -> u32 {
         }
 
         t.push(*cost + max_prev_t.unwrap());
+    }
+
+    *t.iter().max().unwrap()
+}
+
+pub fn dj(s: &[u32], l: &[u32]) -> u32 {
+    let mut s_indexed = s.iter().enumerate().collect::<Vec<_>>();
+    s_indexed.sort_by(|x, y| x.1.partial_cmp(&y.1).unwrap());
+
+    let mut t: Vec<u32> = vec![1; l.len()];
+
+    for i in 0..t.len() {
+        if i == 0 {
+            continue
+        }
+
+        for j in 0..i {
+            if s_indexed[i].1 > s_indexed[j].1 && l[s_indexed[i].0] > l[s_indexed[j].0] {
+                t[i] = max(t[i], t[j] + 1)
+            }
+        }
     }
 
     *t.iter().max().unwrap()

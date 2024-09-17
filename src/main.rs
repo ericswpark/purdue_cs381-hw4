@@ -99,8 +99,8 @@ async fn question_three(Json(payload): Json<QuestionThree>) -> impl IntoResponse
 
 fn most_keypresses(n: u32) -> u32 {
     // Possible clipboard values range from 0 to n, so we need to have n + 1 spaces
-    // To prevent overflowing, leave 10 of headroom
-    let mut t: Vec<Vec<u32>> = vec![vec![u32::MAX - 10; (n + 1) as usize]; n as usize];
+    // To prevent overflowing, leave some headroom
+    let mut t: Vec<Vec<u32>> = vec![vec![u32::MAX - 100; (n + 1) as usize]; n as usize];
 
     for i in 0..n {
         if i == 0 {

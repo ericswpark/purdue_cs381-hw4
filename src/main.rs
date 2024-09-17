@@ -116,8 +116,8 @@ fn most_keypresses(n: u32) -> u32 {
             // Pasting - find i and j that sum up to the current value
             let mut paste_case = u32::MAX;
             for i_p in 0..i {
-                for j_p in 0..i_p {
-                    if i_p + j_p + 1 == i {
+                for j_p in 0..=i_p + 1 {
+                    if (i_p + 1) + j_p == (i + 1) && j_p == j {
                         paste_case = min(paste_case, t[i_p as usize][j_p as usize] + 2);
                     }
                 }

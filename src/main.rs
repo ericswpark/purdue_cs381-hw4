@@ -144,6 +144,7 @@ fn most_keypresses(n: u32) -> u32 {
 async fn main() {
     let app = Router::new()
         .route("/1", post(question_one))
+        .route("/3", post(question_three))
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
 

@@ -83,8 +83,10 @@ pub fn most_keypresses(n: u32) -> u32 {
 
             // Copying
             let mut copy_case = u32::MAX;
-            for j_p in 0..=i + 1 {
-                copy_case = min(copy_case, t[i as usize][j_p as usize] + 3);
+            if j == i + 1 {
+                for j_p in 0..=i + 1 {
+                     copy_case = min(copy_case, t[i as usize][j_p as usize] + 3);
+                }
             }
 
             t[i as usize][j as usize] = *[add_a, copy_case, paste_case].iter().min().unwrap();

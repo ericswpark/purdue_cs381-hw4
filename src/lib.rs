@@ -95,3 +95,21 @@ pub fn most_keypresses(n: u32) -> u32 {
 
     *t[(n - 1) as usize].iter().min().unwrap()
 }
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_most_keypresses_handout() {
+        assert_eq!(most_keypresses(15), 12);
+
+    }
+
+    #[test]
+    fn test_most_keypresses_sarthak() {
+        assert_eq!(most_keypresses(34), 19);
+        assert_eq!(most_keypresses(41), 20);
+    }
+}
